@@ -1,9 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
-import data from "../utils/data";
-import Item from "./item";
 
-export const Layout = ({ title }) => {
+
+export const Layout = ({ title,children }) => {
    
 
   return (
@@ -26,15 +25,11 @@ export const Layout = ({ title }) => {
             </div>
           </nav>
         </header>
-        <main className=" container m-auto mt-4 px-2 my-5 flex flex-wrap gap-5 sm:justify-center sm:items-center ">{
-            data.products.map((item,index)=> {
-                const {name,brand,price,image} = item
-                return (
-                    <Item key={index} name={name} brand={brand} price={price} image={image} />
-                )
-            }
-            )
-        }</main>
+        <main className=" container m-auto mt-4 px-2">
+        {
+            children
+        }
+        </main>
         <footer className=" flex justify-center items-center h-10 shadow-inner">
             <p>Copyright © 2022 Amazona</p>
         </footer>
