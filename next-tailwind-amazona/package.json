@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "tw:build": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
+
   },
   "dependencies": {
     "eslint": "8.28.0",
