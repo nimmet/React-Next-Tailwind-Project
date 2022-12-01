@@ -13,29 +13,42 @@ const SingleProduct = () => {
     return <div>Product Not Found</div>;
   }
 
-  console.log(product);
   return (
     <Layout title={product.name}>
-        <div>
-    <Link href="/">back to products</Link>
-    <div>
-      <img src={product.image} alt={product.slug} />
+      <Link href="/" className="mx-4 font-[500]">back to products</Link>
+      <div className="mx-4 my-4">
+        <div className=" flex flex-col gap-5 justify-between md:flex-row min-w-full ">
+          <img src={product.image} alt={product.slug} 
+            className=" md:w-[48%]"
+          />
 
-      <div>
-        <h1>{product.name}</h1>
-        <h2>{product.category}</h2>
-        <h2>{product.brand}</h2>
-        <p>{product.rating}</p>
-        <p>{product.description}</p>
+          <div className=" md:w-[24%] font-[500]">
+            <h1>{product.name}</h1>
+            <h2>Category: {product.category}</h2>
+            <h2>Brand: {product.brand}</h2>
+            <p>
+              {product.rating} of {product.numReviews} reviews
+            </p>
+            <p>Description: {product.description}</p>
+          </div>
+
+          <div className=" md:w-[24%] flex flex-col rounded-md shadow-md border p-5 h-min font-[500]">
+            <div className=" flex justify-between items-center ">
+              <h2>Price</h2>
+              <h2>${product.price}</h2>
+            </div>
+            <div className=" flex justify-between items-center ">
+              <h2>Status</h2>
+              <h2>{product.countInStock ? "In stock" : "Not in stock"}</h2>
+            </div>
+           
+
+            <button className="primary-button my-4">Add to cart</button>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
-    
     </Layout>
   );
 };
 
 export default SingleProduct;
-
-
-  
