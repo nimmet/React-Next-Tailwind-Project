@@ -9,8 +9,17 @@ const cart = () => {
   const { cart } = state;
   let total = 0
 
-  const deleteItemHandler =(slug)=> {
-    cart.cartItems.filter((item)=> item.slug !== slug)
+  const removeItemHandler = (slug) => {
+
+    const existingCartItems = cart.cartItems.find((cartItem)=> cartItem.slug === slug)
+
+    if(existingCartItems.quantity===1){
+        return cart.cartItems.filter(cartItem => cartItem.slug !== slug)
+    }
+
+    return cart.cartItems.map((cartItem)=> cartItem.slug === slug ? {...cartItem,quantity:cartItem.quantity-1} : cartItem
+    )
+
   }
   
 
@@ -52,7 +61,7 @@ const cart = () => {
                     <h1>${item.price}</h1>
                     <h1>
                       <TiDeleteOutline className=" cursor-pointer" size={30}
-                       onClick= {()=> deleteItemHandler(item.slug)}/>
+                       onClick= {()=>removeItemHandler(item.slug)}/>
                     </h1>
                   </div>
                 );
