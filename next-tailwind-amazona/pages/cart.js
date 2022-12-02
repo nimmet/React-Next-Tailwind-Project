@@ -5,8 +5,9 @@ import { Store } from "../utils/Store";
 import { TiDeleteOutline } from "react-icons/ti";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
-const Cart = () => {
+const CartScreen = () => {
 
   const router = useRouter()  
   const { state, dispatch } = useContext(Store);
@@ -107,4 +108,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default dynamic(()=> Promise.resolve(CartScreen), {ssr:false});
