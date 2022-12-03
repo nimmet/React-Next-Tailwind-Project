@@ -1,16 +1,38 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Layout } from "../components/Layout";
+import {signIn, useSession} from 'next-auth/react'
+import { TiSocialLastFm } from "react-icons/ti";
+import { getError } from "../utils/error";
+import { toast } from "react-toastify";
+import {useRouter} from "next/router";
 
 const LoginScreen = () => {
+    const {data:session} = useSession()
+    const router = useRouter()
+    const {redirect} = router.query
 
+    useEffect(()=>{
+        if(session?.user){
+            router.push(redirect || '/')
+        }
+    },[router,session,redirect])
     const {
         handleSubmit, register, formState: { errors},
     } = useForm()
 
-    const submitHandler = ({email,password}) => {
+    const submitHandler = async ({email,password}) => {
+        try {
+            const result = await signIn('credentials', {
+                redirect :false,
+                email,
+                password,
+            })
 
+        }catch(err){
+            toast.error(getError(err))
+        }
     }
 
   return (
@@ -19,10 +41,16 @@ const LoginScreen = () => {
         <h1 className="mb-4 text-xl">Login</h1>
         <div className="mb-4">
           <label htmlFor="email">Email</label>
-          <input type="email" id="email" autoFocus className="w-full" {...register('email',{required:'Please enter email', pattern:{
-            value:/^[a-zA-Z0-9_.+-]+$[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
-            message:'please enter a valid email'
-          }})}/>
+          <input type="email" id="email" autoFocus className="w-full" 
+           {...register('email', {
+              required: 'Please enter email',
+              pattern: {
+                value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
+                message: 'Please enter valid email',
+              },
+            })}
+
+          />
           {errors.email && <div className="text-red-500 mt-1">{errors.email.message}</div>}
         </div>
 
