@@ -1,111 +1,52 @@
+import Link from "next/link";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Layout } from "../components/Layout";
 
-import Link from 'next/link'
-import React, { useRef, useState } from 'react'
-import { Layout } from '../components/Layout'
+const LoginScreen = () => {
 
-const Login = () => {
-    const [register,setRegister] = useState(false)
-    const passwordRef = useRef('')
-    const [pass,setPass] = useState()
+    const {
+        handleSubmit, register, formState: { errors},
+    } = useForm()
 
-    const loginHandler =() => {
-       if(pass.length < 5){
-        alert("Password must be at least 5 characters")
-        passwordRef.current.focus()
-       }
-       console.log(passwordRef.current);
+    const submitHandler = ({email,password}) => {
+
     }
 
   return (
     <Layout title="Login">
-    { !register ?
-       <div className=' flex flex-col gap-5 mx-20 md:mx-[350px]'>
-        <h1 className=' text-lg font-[500]'> { register?'Register': 'Login'}</h1>
-
-        <form >
-        <div className=' flex flex-col gap-1 mb-2'>
-
-            <label htmlFor="email">Email</label>
-            <input type="email" name="email" required 
-                className='rounded-md h-10  bg-sky-100 outline-none active:outline hover:outline-sky-300 outline-offset-0
-                '
-            />
+      <form className="mx-auto max-w-screen-md" onSubmit={handleSubmit(submitHandler)}>
+        <h1 className="mb-4 text-xl">Login</h1>
+        <div className="mb-4">
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" autoFocus className="w-full" {...register('email',{required:'Please enter email', pattern:{
+            value:/^[a-zA-Z0-9_.+-]+$[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
+            message:'please enter a valid email'
+          }})}/>
+          {errors.email && <div className="text-red-500 mt-1">{errors.email.message}</div>}
         </div>
 
-        <div className=' flex flex-col gap-1'>
-            <label htmlFor="password">Password</label>
-            <input type="password" name="password" required
-            ref={passwordRef} 
-            value={pass}
-            onChange={(e)=> {
-                
-                 setPass(e.target.value)}}
-                 className='rounded-md h-10  bg-sky-100 outline-none active:outline hover:outline-sky-300 outline-offset-0'
-            />
-           
+        <div className="mb-4">
+          <label htmlFor="password">Password</label>
+          <input type="password" id="password" autoFocus className="w-full" 
+            {...register('password',{required:'Please enter password',
+            minLength: {value:6,message:'password must be more than 6 characters'}
+            })}
+          />
+{errors.password && <div className="text-red-500 mt-1">{errors.password.message}</div>}
         </div>
 
-        <div className=' flex flex-col gap-3 mt-5'>
-
-        <button className='primary-button w-min'
-        onClick={()=>loginHandler}
-        >Login</button>
-        <div>
-        Don't have an account?
-        <Link href="" className='  '
-        onClick={()=> setRegister(!register)}> Register</Link>
-        </div>
-        
-        </div>
-        </form>
-       </div>
-       :
-       <div className=' flex flex-col gap-5 mx-20 md:mx-[350px]'>
-       <h1 className=' text-lg font-[500]'> { register?'Register': 'Login'}</h1>
-
-        <form >
-
-        <div className=' flex flex-col gap-1 mb-2'>
-
-<label htmlFor="name">Name</label>
-<input type="text" name="name"  
-    className='rounded-md h-10  bg-sky-100 outline-none active:outline hover:outline-sky-300 outline-offset-0
-    '
-/>
-</div>
-        <div className=' flex flex-col gap-1 mb-2'>
-
-            <label htmlFor="email">Email</label>
-            <input type="email" name="email" required 
-                className='rounded-md h-10  bg-sky-100 outline-none active:outline hover:outline-sky-300 outline-offset-0
-                '
-            />
+        <div className="mb-4">
+          <button className="primary-button">Login</button>
         </div>
 
-        <div className=' flex flex-col gap-1'>
-            <label htmlFor="password">Password</label>
-            <input type="password" name="password" 
-            ref={passwordRef} 
-            required 
-                 className='rounded-md h-10  bg-sky-100 outline-none active:outline hover:outline-sky-300 outline-offset-0'
-            />
+        <div className="mb-4">
+          Don&apos;t have an account? &nbsp;
+          <Link href="register">Register</Link>
         </div>
-
-        <div className=' flex flex-col gap-3 mt-5'>
-
-        <button className='primary-button w-min'>Login</button>
-        <div>
-        Don't have an account?
-        <Link href="" className='  '
-        onClick={()=> setRegister(!register)}> Register</Link>
-        </div>
-        </div>
-        </form>
-       </div>
-    }
+      </form>
     </Layout>
+  );
+};
 
-  )
-}
-
-export default Login
+export default LoginScreen;
