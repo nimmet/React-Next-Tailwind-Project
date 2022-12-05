@@ -6,7 +6,6 @@ import { ToastContainer } from "react-toastify";
 import {signOut, useSession } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
 import { Menu } from "@headlessui/react";
-import { TiThMenuOutline } from "react-icons/ti";
 import DropdownLink from "./DropdownLink";
 import Cookies from 'js-cookie';
 
