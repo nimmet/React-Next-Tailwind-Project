@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Layout } from "../components/Layout";
 import {signIn, useSession} from 'next-auth/react'
-import { TiSocialLastFm } from "react-icons/ti";
 import { getError } from "../utils/error";
 import { toast } from "react-toastify";
 import {useRouter} from "next/router";
@@ -23,18 +22,20 @@ const LoginScreen = () => {
         handleSubmit, register, formState: { errors},
     } = useForm()
 
-    const submitHandler = async ({email,password}) => {
-        try {
-            const result = await signIn('credentials', {
-                redirect :false,
-                email,
-                password,
-            })
-
-        }catch(err){
-            toast.error(getError(err))
+    const submitHandler = async ({ email, password }) => {
+      try {
+        const result = await signIn('credentials', {
+          redirect: false,
+          email,
+          password,
+        });
+        if (result.error) {
+          toast.error(result.error);
         }
-    }
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
 
   return (
     <Layout title="Login">
