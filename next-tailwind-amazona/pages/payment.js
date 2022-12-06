@@ -1,37 +1,69 @@
-import { RadioGroup } from "@headlessui/react";
+import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import CheckoutWizard from "../components/CheckoutWizard";
 import { Layout } from "../components/Layout";
+import { Store } from "../utils/Store";
 
-const Payment = () => {
-    const router = useRouter()
+const PaymentScreen = () => {
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const router = useRouter();
+  const {state, dispatch} = useContext(Store)
+  const {cart} = state 
+  const {shippingAddress, paymentMethod} = cart 
+
+  const submitHandler = (e) => {
+    e.preventDefault()
+    if(!selectedPaymentMethod){
+        return toast.error('Payment Method is required')
+    }
+
+    dispatch({type:'SAVE_PAYMENT_METHOD', payload: selectedPaymentMethod})
+
+    Cookies.set(
+        'cart',
+        JSON.stringify({...cart,
+            paymentMethod: selectedPaymentMethod,})
+    )
+
+    router.push('/placeorder')
+  };
+
+  useEffect(()=>{
+    if(!shippingAddress.address){
+        return router.push('/shipping')
+    }
+    setSelectedPaymentMethod(paymentMethod || '')
+
+  },[paymentMethod, router, shippingAddress.address])
+
   return (
     <Layout title="Payment Method">
       <CheckoutWizard activeStep={2} />
+      <form className="mx-auto max-w-screen-md" onSubmit={submitHandler}>
+        <h1 className="mb-4 text-lg">Payment Method</h1>
+        {["PayPal", "Stripe", "ChashOnDelivery"].map((payment) => (
+          <div key={payment} className="mb-4">
+            <input
+              className="p-2 outline-none focus:ring-0"
+              type="radio"
+              name="paymentMethod"
+              id={payment}
+              checked={selectedPaymentMethod === payment}
+              onChange={() => setSelectedPaymentMethod(payment)}
+            />
+            <label className="p-2" htmlFor={payment}>
+              {payment}
+            </label>
+          </div>
+        ))}
 
-      <form className=" flex flex-col max-w-screen-md mx-auto gap-5">
-        <h1 className=" text-lg font-bold">Payment Methond</h1>
+        <div className="mb-4 flex justify-between">
+            <button onClick={()=>router.push('/shipping')}
+            className="default-button">Back</button>
 
-       
-
-        <div>
-          <input type="radio" name="PayPal" id="Paypal" checked/> PayPal
-        </div>
-
-        <div>
-            <input type="radio" name="Stripe" id="Stripe" /> Stripe
-        </div>
-
-        <div>
-            <input type="radio" name="CashOnDelivery" id="CashOnDelivery" /> CashOnDelivery
-        </div>
-
-
-
-        <div className=" flex justify-between">
-            <button className="primary-button-gray "
-            onClick={()=> router.push('/shipping')}>Back</button>
             <button className="primary-button">Next</button>
         </div>
       </form>
@@ -39,4 +71,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default PaymentScreen;

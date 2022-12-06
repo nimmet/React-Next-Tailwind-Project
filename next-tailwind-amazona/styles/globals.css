@@ -32,11 +32,11 @@ a {
 }
 
 .primary-button {
-  @apply rounded bg-amber-300 py-2 px-4 shadow outline-none hover:bg-amber-400 active:bg-amber-500
+  @apply rounded bg-amber-300 py-2 px-4 shadow outline-none hover:bg-amber-400 active:bg-amber-500;
 }
 
-.primary-button-gray {
-  @apply rounded bg-slate-300 py-2 px-4 shadow outline-none hover:bg-slate-400 active:bg-slate-500
+.default-button {
+  @apply rounded bg-gray-100 text-black py-2 px-4 shadow outline-none hover:bg-slate-200 active:bg-slate-300;
 }
 input,
 select,
