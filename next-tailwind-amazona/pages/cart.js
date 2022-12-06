@@ -6,10 +6,11 @@ import { TiDeleteOutline } from "react-icons/ti";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const CartScreen = () => {
-
-  const router = useRouter()  
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
@@ -19,10 +20,17 @@ const CartScreen = () => {
     dispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };
 
-  const updateCartHandler = (item, qty)=> {
-    const quantity = Number(qty)
-    dispatch({type:'CART_ADD_ITEM', payload:{...item, quantity}})
-  }
+  const updateCartHandler = async (item, qty) => {
+    const quantity = Number(qty);
+    const {data} = await axios.get(`/api/products/${item._id}`)
+    if(data.countInStock<quantity) {
+return toast.error('Sorrry, Product is out of stock')
+
+    }
+    dispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
+    toast.success('Product updated in the cart')
+  };
+
 
 
   return (
@@ -64,15 +72,18 @@ const CartScreen = () => {
                     </td>
 
                     <td className="p-5 text-right">
-                    <select value={item.quantity} onChange={
-                        (e)=> updateCartHandler(item,e.target.value)
-                    }>
-                        {
-                            [...Array(item.countInStock).keys()].map(x => (
-                                <option key={x+1} value={x+1}>{x+1}</option>
-                            ))
+                      <select
+                        value={item.quantity}
+                        onChange={(e) =>
+                          updateCartHandler(item, e.target.value)
                         }
-                        </select>
+                      >
+                        {[...Array(item.countInStock).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td className="p-5 text-right">${item.price}</td>
                     <td className="p-5 text-center">
@@ -91,15 +102,17 @@ const CartScreen = () => {
             <ul>
               <li>
                 <div className="pb-3 text-lg">
-                  Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)})
-                  
-                  : $ {cartItems.reduce((a, c) => a + c.quantity * c.price,0)}
+                  Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}) : ${" "}
+                  {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
                 </div>
               </li>
               <li>
-                <button className="primary-button w-full "
-                onClick={()=> router.push('login?redirect=/shipping')}>Check Out</button>
-              
+                <button
+                  className="primary-button w-full "
+                  onClick={() => router.push("login?redirect=/shipping")}
+                >
+                  Check Out
+                </button>
               </li>
             </ul>
           </div>
@@ -109,4 +122,4 @@ const CartScreen = () => {
   );
 };
 
-export default dynamic(()=> Promise.resolve(CartScreen), {ssr:false});
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });
